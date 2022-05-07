@@ -1,36 +1,82 @@
 import * as vscode from 'vscode';
 import { minify } from 'uglify-js';
 
+function getJavaScript() {
+    const editor = vscode.window.activeTextEditor;
+    if (editor?.document?.languageId !== 'javascript') {
+        return '';
+    }
+
+    let text = editor.document.getText();
+    text = text.trim();
+
+    return text;
+}
+
+function bookmarkletify(input: string) {
+    let code = input;
+
+    if (code.startsWith('javascript:')) {
+        code = code.substring('javascript:'.length);
+    }
+
+    const minified = minify(code);
+    if(minified.error) {
+        throw minified.error;
+    }
+
+    code = 'javascript:' + encodeURIComponent('(()=>{' + minified.code + '})();');
+
+    return code;
+}
+
 export function activate(context: vscode.ExtensionContext) {
-    let disposable = vscode.commands.registerCommand('bookmarkletify.copyBookmarklet', () => {
-		const editor = vscode.window.activeTextEditor;
-        if (editor?.document?.languageId !== 'javascript') {
+    const disposableCopy = vscode.commands.registerCommand('bookmarkletify.copyToClipboard', () => {
+        let js = getJavaScript();
+        if (js.length === 0) {
             return;
         }
 
-        let text = editor.document.getText();
-        text = text.trim();
-        if (text.length === 0) {
+        try {
+            js = bookmarkletify(js);
+        }
+        catch (e) {
+            if (e instanceof Error) {
+                vscode.window.showErrorMessage(e.message);
+            }
             return;
         }
 
-        if (text.startsWith('javascript:')) {
-            text = text.substring('javascript:'.length);
-        }
-
-        const minified = minify(text);
-        if(minified.error) {
-            vscode.window.showErrorMessage(minified.error.message);
-            return;
-        }
-
-        text = 'javascript:' + encodeURIComponent('(()=>{' + minified.code + '})();');
-
-        vscode.env.clipboard.writeText(text);
+        vscode.env.clipboard.writeText(js);
         vscode.window.showInformationMessage('Bookmarkletify: Copied!');
 	});
 
-	context.subscriptions.push(disposable);
+    const disposableNewFile = vscode.commands.registerCommand('bookmarkletify.newFile', () => {
+        let js = getJavaScript();
+        if (js.length === 0) {
+            return;
+        }
+
+        try {
+            js = bookmarkletify(js);
+        }
+        catch (e) {
+            if (e instanceof Error) {
+                vscode.window.showErrorMessage(e.message);
+            }
+            return;
+        }
+
+        vscode.workspace.openTextDocument({
+            language: 'javascript',
+            content: js,
+        }).then((document) => {
+            vscode.window.showTextDocument(document);
+        });
+	});
+
+	context.subscriptions.push(disposableCopy);
+	context.subscriptions.push(disposableNewFile);
 }
 
 export function deactivate() {}

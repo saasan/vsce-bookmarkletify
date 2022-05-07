@@ -10,14 +10,19 @@
         "Other"
     ],
     "activationEvents": [
-        "onCommand:bookmarkletify.copyBookmarklet"
+        "onCommand:bookmarkletify.copyToClipboard",
+        "onCommand:bookmarkletify.newFile"
     ],
     "main": "./out/extension.js",
     "contributes": {
         "commands": [
             {
-                "command": "bookmarkletify.copyBookmarklet",
-                "title": "Bookmarkletify: Copy Bookmarklet"
+                "command": "bookmarkletify.copyToClipboard",
+                "title": "Bookmarkletify: Copy to Clipboard"
+            },
+            {
+                "command": "bookmarkletify.newFile",
+                "title": "Bookmarkletify: New File"
             }
         ]
     },
