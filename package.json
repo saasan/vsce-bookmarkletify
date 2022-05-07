@@ -3,6 +3,12 @@
     "displayName": "Bookmarkletify",
     "description": "Convert JavaScript to Bookmarklet.",
     "version": "0.0.1",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/saasan/vsce-bookmarkletify.git"
+    },
+    "author": "saasan",
+    "license": "MIT",
     "engines": {
         "vscode": "^1.67.0"
     },
