@@ -8,6 +8,7 @@
         "url": "git+https://github.com/saasan/vsce-bookmarkletify.git"
     },
     "author": "saasan",
+    "publisher": "saasan",
     "license": "MIT",
     "engines": {
         "vscode": "^1.67.0"
