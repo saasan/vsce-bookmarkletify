@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { minify } from 'uglify-js';
+import { minify } from 'terser';
 import { EXT_ID, SUPPORTED_FILES, PROTOCOL } from './utils';
 
 function getText() {
@@ -22,55 +22,25 @@ function removeProtocol(input: string) {
     return input;
 }
 
-function bookmarkletify(input: string) {
-    const minified = minify(input);
-    if(minified.error) {
-        throw minified.error;
-    }
+async function bookmarkletify() {
+    const input = getText();
+    let output = removeProtocol(input);
+    const minifyOutput = await minify(output);
+    output = minifyOutput.code ?? output;
 
-    return PROTOCOL + encodeURIComponent('(()=>{' + minified.code + '})();');
+    return PROTOCOL + encodeURIComponent('(()=>{' + output + '})();');
 }
 
 export function activate(context: vscode.ExtensionContext) {
-    const disposableCopy = vscode.commands.registerCommand(`${EXT_ID}.copyToClipboard`, () => {
-        const input = getText();
-        if (input.length === 0) {
-            return;
-        }
-
-        let output = removeProtocol(input);
-
-        try {
-            output = bookmarkletify(output);
-        }
-        catch (e) {
-            if (e instanceof Error) {
-                vscode.window.showErrorMessage(e.message);
-            }
-            return;
-        }
+    const disposableCopy = vscode.commands.registerCommand(`${EXT_ID}.copyToClipboard`, async () => {
+        const output = await bookmarkletify();
 
         vscode.env.clipboard.writeText(output);
         vscode.window.showInformationMessage('Bookmarkletify: Copied!');
 	});
 
-    const disposableNewFile = vscode.commands.registerCommand(`${EXT_ID}.newFile`, () => {
-        const input = getText();
-        if (input.length === 0) {
-            return;
-        }
-
-        let output = removeProtocol(input);
-
-        try {
-            output = bookmarkletify(output);
-        }
-        catch (e) {
-            if (e instanceof Error) {
-                vscode.window.showErrorMessage(e.message);
-            }
-            return;
-        }
+    const disposableNewFile = vscode.commands.registerCommand(`${EXT_ID}.newFile`, async () => {
+        const output = await bookmarkletify();
 
         vscode.workspace.openTextDocument({
             language: 'javascript',
