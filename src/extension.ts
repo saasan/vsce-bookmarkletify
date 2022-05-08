@@ -1,13 +1,14 @@
 import * as vscode from 'vscode';
 import { minify } from 'uglify-js';
+import { EXT_ID, SUPPORTED_FILES } from './utils';
 
 function getJavaScript() {
-    const editor = vscode.window.activeTextEditor;
-    if (editor?.document?.languageId !== 'javascript') {
+    const doc = vscode.window.activeTextEditor?.document;
+    if (doc === undefined || !SUPPORTED_FILES.includes(doc.languageId)) {
         return '';
     }
 
-    let text = editor.document.getText();
+    let text = doc.getText();
     text = text.trim();
 
     return text;
@@ -31,7 +32,7 @@ function bookmarkletify(input: string) {
 }
 
 export function activate(context: vscode.ExtensionContext) {
-    const disposableCopy = vscode.commands.registerCommand('bookmarkletify.copyToClipboard', () => {
+    const disposableCopy = vscode.commands.registerCommand(`${EXT_ID}.copyToClipboard`, () => {
         let js = getJavaScript();
         if (js.length === 0) {
             return;
@@ -51,7 +52,7 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.window.showInformationMessage('Bookmarkletify: Copied!');
 	});
 
-    const disposableNewFile = vscode.commands.registerCommand('bookmarkletify.newFile', () => {
+    const disposableNewFile = vscode.commands.registerCommand(`${EXT_ID}.newFile`, () => {
         let js = getJavaScript();
         if (js.length === 0) {
             return;
@@ -70,8 +71,8 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.workspace.openTextDocument({
             language: 'javascript',
             content: js,
-        }).then((document) => {
-            vscode.window.showTextDocument(document);
+        }).then((doc) => {
+            vscode.window.showTextDocument(doc);
         });
 	});
 
