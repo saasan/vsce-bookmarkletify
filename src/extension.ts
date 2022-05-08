@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
 import { minify } from 'uglify-js';
-import { EXT_ID, SUPPORTED_FILES } from './utils';
+import { EXT_ID, SUPPORTED_FILES, PROTOCOL } from './utils';
 
-function getJavaScript() {
+function getText() {
     const doc = vscode.window.activeTextEditor?.document;
     if (doc === undefined || !SUPPORTED_FILES.includes(doc.languageId)) {
         return '';
@@ -14,32 +14,34 @@ function getJavaScript() {
     return text;
 }
 
-function bookmarkletify(input: string) {
-    let code = input;
-
-    if (code.startsWith('javascript:')) {
-        code = code.substring('javascript:'.length);
+function removeProtocol(input: string) {
+    if (input.startsWith(PROTOCOL)) {
+        return input.substring(PROTOCOL.length);
     }
 
-    const minified = minify(code);
+    return input;
+}
+
+function bookmarkletify(input: string) {
+    const minified = minify(input);
     if(minified.error) {
         throw minified.error;
     }
 
-    code = 'javascript:' + encodeURIComponent('(()=>{' + minified.code + '})();');
-
-    return code;
+    return PROTOCOL + encodeURIComponent('(()=>{' + minified.code + '})();');
 }
 
 export function activate(context: vscode.ExtensionContext) {
     const disposableCopy = vscode.commands.registerCommand(`${EXT_ID}.copyToClipboard`, () => {
-        let js = getJavaScript();
-        if (js.length === 0) {
+        const input = getText();
+        if (input.length === 0) {
             return;
         }
 
+        let output = removeProtocol(input);
+
         try {
-            js = bookmarkletify(js);
+            output = bookmarkletify(output);
         }
         catch (e) {
             if (e instanceof Error) {
@@ -48,18 +50,20 @@ export function activate(context: vscode.ExtensionContext) {
             return;
         }
 
-        vscode.env.clipboard.writeText(js);
+        vscode.env.clipboard.writeText(output);
         vscode.window.showInformationMessage('Bookmarkletify: Copied!');
 	});
 
     const disposableNewFile = vscode.commands.registerCommand(`${EXT_ID}.newFile`, () => {
-        let js = getJavaScript();
-        if (js.length === 0) {
+        const input = getText();
+        if (input.length === 0) {
             return;
         }
 
+        let output = removeProtocol(input);
+
         try {
-            js = bookmarkletify(js);
+            output = bookmarkletify(output);
         }
         catch (e) {
             if (e instanceof Error) {
@@ -70,7 +74,7 @@ export function activate(context: vscode.ExtensionContext) {
 
         vscode.workspace.openTextDocument({
             language: 'javascript',
-            content: js,
+            content: output,
         }).then((doc) => {
             vscode.window.showTextDocument(doc);
         });
