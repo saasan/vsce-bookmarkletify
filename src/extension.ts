@@ -4,7 +4,7 @@ import { EXT_ID, SUPPORTED_FILES, PROTOCOL } from './utils';
 
 function getText() {
     const doc = vscode.window.activeTextEditor?.document;
-    if (doc === undefined || !SUPPORTED_FILES.includes(doc.languageId)) {
+    if (doc == null || !SUPPORTED_FILES.includes(doc.languageId)) {
         return '';
     }
 
