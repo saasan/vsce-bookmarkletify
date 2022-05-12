@@ -1,6 +1,7 @@
 # Bookmarkletify
 
 Convert JavaScript to Bookmarklet.
+Minify, encode and copy your JavaScript source code.
 
 ## Features
 

@@ -1,7 +1,7 @@
 {
     "name": "bookmarkletify",
     "displayName": "Bookmarkletify",
-    "description": "Convert JavaScript to Bookmarklet.",
+    "description": "Convert JavaScript to Bookmarklet. Minify, encode and copy your JavaScript source code.",
     "version": "1.0.0",
     "repository": {
         "type": "git",
