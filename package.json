@@ -2,7 +2,7 @@
     "name": "bookmarkletify",
     "displayName": "Bookmarkletify",
     "description": "Convert JavaScript to Bookmarklet.",
-    "version": "0.0.1",
+    "version": "1.0.0",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/saasan/vsce-bookmarkletify.git"
@@ -31,7 +31,27 @@
                 "command": "bookmarkletify.newFile",
                 "title": "Bookmarkletify: New File"
             }
-        ]
+        ],
+        "configuration": {
+            "title": "Bookmarkletify",
+            "properties": {
+                "bookmarkletify.protocol": {
+                    "type": "string",
+                    "default": "javascript:",
+                    "description": "Controls the protocol given before JavaScript."
+                },
+                "bookmarkletify.prefix": {
+                    "type": "string",
+                    "default": "(()=>{",
+                    "description": "Controls the string given before JavaScript."
+                },
+                "bookmarkletify.suffix": {
+                    "type": "string",
+                    "default": "})();",
+                    "description": "Controls the string given after JavaScript."
+                }
+            }
+        }
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",

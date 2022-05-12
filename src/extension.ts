@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { minify } from 'terser';
-import { EXT_ID, SUPPORTED_FILES, PROTOCOL } from './utils';
+import { config, reloadConfig } from './config';
+import { EXT_ID, SUPPORTED_FILES } from './utils';
 
 function getText() {
     const doc = vscode.window.activeTextEditor?.document;
@@ -15,8 +16,8 @@ function getText() {
 }
 
 function removeProtocol(input: string) {
-    if (input.startsWith(PROTOCOL)) {
-        return input.substring(PROTOCOL.length);
+    if (input.startsWith(config.protocol)) {
+        return input.substring(config.protocol.length);
     }
 
     return input;
@@ -28,30 +29,37 @@ async function bookmarkletify() {
     const minifyOutput = await minify(output);
     output = minifyOutput.code ?? output;
 
-    return PROTOCOL + encodeURIComponent('(()=>{' + output + '})();');
+    return config.protocol + encodeURIComponent(config.prefix + output + config.suffix);
 }
 
 export function activate(context: vscode.ExtensionContext) {
-    const disposableCopy = vscode.commands.registerCommand(`${EXT_ID}.copyToClipboard`, async () => {
-        const output = await bookmarkletify();
+    reloadConfig();
 
-        vscode.env.clipboard.writeText(output);
-        vscode.window.showInformationMessage('Bookmarkletify: Copied!');
-	});
+    context.subscriptions.push(
+        vscode.commands.registerCommand(`${EXT_ID}.copyToClipboard`, async () => {
+            const output = await bookmarkletify();
 
-    const disposableNewFile = vscode.commands.registerCommand(`${EXT_ID}.newFile`, async () => {
-        const output = await bookmarkletify();
+            vscode.env.clipboard.writeText(output);
+            vscode.window.showInformationMessage('Bookmarkletify: Copied!');
+        }),
 
-        vscode.workspace.openTextDocument({
-            language: 'javascript',
-            content: output,
-        }).then((doc) => {
-            vscode.window.showTextDocument(doc);
-        });
-	});
+        vscode.commands.registerCommand(`${EXT_ID}.newFile`, async () => {
+            const output = await bookmarkletify();
 
-	context.subscriptions.push(disposableCopy);
-	context.subscriptions.push(disposableNewFile);
+            vscode.workspace.openTextDocument({
+                language: 'javascript',
+                content: output,
+            }).then((doc) => {
+                vscode.window.showTextDocument(doc);
+            });
+        }),
+
+        vscode.workspace.onDidChangeConfiguration(e => {
+            if (e.affectsConfiguration(EXT_ID)) {
+                reloadConfig();
+            }
+        })
+    );
 }
 
 export function deactivate() {}
