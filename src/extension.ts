@@ -23,8 +23,7 @@ function removeProtocol(input: string) {
     return input;
 }
 
-async function bookmarkletify() {
-    const input = getText();
+async function bookmarkletify(input: string) {
     let output = removeProtocol(input);
     const minifyOutput = await minify(output);
     output = minifyOutput.code ?? output;
@@ -37,14 +36,26 @@ export function activate(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(
         vscode.commands.registerCommand(`${EXT_ID}.copyToClipboard`, async () => {
-            const output = await bookmarkletify();
+            const input = getText();
+            if (input.length === 0) {
+                vscode.window.showErrorMessage('JavaScript file is not open.');
+                return;
+            }
+
+            const output = await bookmarkletify(input);
 
             vscode.env.clipboard.writeText(output);
             vscode.window.showInformationMessage('Bookmarkletify: Copied!');
         }),
 
         vscode.commands.registerCommand(`${EXT_ID}.newFile`, async () => {
-            const output = await bookmarkletify();
+            const input = getText();
+            if (input.length === 0) {
+                vscode.window.showErrorMessage('JavaScript file is not open.');
+                return;
+            }
+
+            const output = await bookmarkletify(input);
 
             vscode.workspace.openTextDocument({
                 language: 'javascript',
