@@ -25,12 +25,12 @@
         "commands": [
             {
                 "command": "bookmarkletify.copyToClipboard",
-                "title": "Copy to Clipboard",
+                "title": "%command.copyToClipboard%",
                 "category": "Bookmarkletify"
             },
             {
                 "command": "bookmarkletify.newFile",
-                "title": "New File",
+                "title": "%command.newFile%",
                 "category": "Bookmarkletify"
             }
         ],
@@ -40,17 +40,17 @@
                 "bookmarkletify.protocol": {
                     "type": "string",
                     "default": "javascript:",
-                    "description": "Controls the protocol given before JavaScript."
+                    "description": "%configuration.protocol.description%"
                 },
                 "bookmarkletify.prefix": {
                     "type": "string",
                     "default": "(()=>{",
-                    "description": "Controls the string given before JavaScript."
+                    "description": "%configuration.prefix.description%"
                 },
                 "bookmarkletify.suffix": {
                     "type": "string",
                     "default": "})();",
-                    "description": "Controls the string given after JavaScript."
+                    "description": "%configuration.suffix.description%"
                 }
             }
         }

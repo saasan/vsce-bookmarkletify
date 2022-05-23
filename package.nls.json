@@ -1,0 +1,7 @@
+{
+    "command.copyToClipboard": "Copy to Clipboard",
+    "command.newFile": "New File",
+    "configuration.protocol.description": "Controls the protocol given before JavaScript.",
+    "configuration.prefix.description": "Controls the string given before JavaScript.",
+    "configuration.suffix.description": "Controls the string given after JavaScript."
+}

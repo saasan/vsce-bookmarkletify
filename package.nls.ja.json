@@ -1,0 +1,7 @@
+{
+    "command.copyToClipboard": "クリップボードへコピー",
+    "command.newFile": "新しいファイル",
+    "configuration.protocol.description": "JavaScript の前に付与するプロトコルを制御します。",
+    "configuration.prefix.description": "JavaScript の前に付与する文字列を制御します。",
+    "configuration.suffix.description": "JavaScript の後ろに付与する文字列を制御します。"
+}
