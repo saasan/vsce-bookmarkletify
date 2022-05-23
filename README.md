@@ -31,6 +31,10 @@ Minify, encode and copy your JavaScript source code.
 
 ## Release Notes
 
+### 1.1.0
+
+- Added Japanese descriptions to commands and settings
+
 ### 1.0.0
 
 - Changed minifier from UglifyJS to terser
