@@ -25,11 +25,13 @@
         "commands": [
             {
                 "command": "bookmarkletify.copyToClipboard",
-                "title": "Bookmarkletify: Copy to Clipboard"
+                "title": "Copy to Clipboard",
+                "category": "Bookmarkletify"
             },
             {
                 "command": "bookmarkletify.newFile",
-                "title": "Bookmarkletify: New File"
+                "title": "New File",
+                "category": "Bookmarkletify"
             }
         ],
         "configuration": {
