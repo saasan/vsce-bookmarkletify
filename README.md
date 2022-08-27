@@ -31,6 +31,10 @@ Minify, encode and copy your JavaScript source code.
 
 ## Release Notes
 
+### 1.1.1
+
+- Bump terser from 5.13.1 to 5.15.0
+
 ### 1.1.0
 
 - Added Japanese descriptions to commands and settings
